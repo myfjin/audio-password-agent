@@ -16,3 +16,10 @@ public enum AudioError: Error, Equatable {
     case corruptPayload(reason: String)
     case ioFailed(reason: String)
 }
+
+public enum VaultError: Error, Equatable {
+    case vaultDirectoryUnreadable(reason: String)
+    case corruptConfig(reason: String)
+    case corruptCredential(reason: String)
+    case wrongMasterPassword
+}
