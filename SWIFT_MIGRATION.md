@@ -5,9 +5,10 @@
 This document describes a phased strategy for migrating the Python-based
 `audio-password-agent` to Swift. The codebase is ~250 lines across three
 core modules (crypto, audio steganography, agent orchestrator). The
-migration targets a **macOS command-line tool** built with Swift Package
-Manager, preserving full backward-compatibility with existing WAV files
-produced by the Python version.
+migration targets a **native macOS app** built with SwiftUI, with the core
+logic packaged as a Swift Package so it can also be consumed from a CLI or
+iOS target. Full backward-compatibility with existing WAV files produced by
+the Python version is preserved.
 
 ---
 
@@ -29,9 +30,10 @@ produced by the Python version.
 | Package manager | Swift Package Manager (SPM) |
 | Crypto primitives | CryptoKit + CommonCrypto (AES-CBC) |
 | WAV I/O | Foundation `Data` + manual RIFF parser |
-| CLI interface | `ArgumentParser` (Apple SPM package) |
+| UI framework | SwiftUI (DAW-style interface, dark + light themes) |
+| State management | `@Observable` / `ObservableObject` view models |
 | Tests | XCTest |
-| Platform | macOS 13+ / Linux (Swift on Linux) |
+| Platform | macOS 13+ (primary), iOS 16+ (future) |
 
 ---
 
@@ -104,12 +106,24 @@ var frames = [UInt8](wavData[pcmOffset...])
 AudioPasswordAgent/
 ├── Package.swift
 ├── Sources/
-│   └── AudioPasswordAgent/
-│       ├── Core/
-│       │   ├── CryptoManager.swift
-│       │   ├── AudioSteganography.swift
-│       │   └── AudioPasswordAgent.swift
-│       └── main.swift          ← CLI entry point
+│   └── AudioPasswordAgentCore/     ← pure Swift, no UI dependency
+│       ├── CryptoManager.swift
+│       ├── AudioSteganography.swift
+│       └── AudioPasswordAgent.swift
+├── App/                             ← Xcode app target (SwiftUI)
+│   ├── AudioPasswordAgentApp.swift
+│   ├── Views/
+│   │   ├── TimelineView.swift       ← main DAW-style track view
+│   │   ├── TrackRowView.swift       ← one row per credential category
+│   │   ├── ClipView.swift          ← colored block with waveform
+│   │   ├── EditorPanelView.swift   ← credential detail / editor
+│   │   └── TransportBarView.swift  ← top bar (lock timer, controls)
+│   ├── ViewModels/
+│   │   ├── TimelineViewModel.swift
+│   │   └── EditorViewModel.swift
+│   └── Theme/
+│       ├── AppTheme.swift          ← orange accent, dark/light
+│       └── Colors.swift
 └── Tests/
     └── AudioPasswordAgentTests/
         ├── CryptoManagerTests.swift
@@ -117,11 +131,9 @@ AudioPasswordAgent/
         └── AudioPasswordAgentTests.swift
 ```
 
-`Package.swift` dependencies:
-```swift
-.package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.0")
-```
-No other external dependencies — crypto and WAV handling use Apple frameworks.
+`Package.swift` dependencies: none external — CryptoKit, CommonCrypto, and
+Foundation cover everything. The `App/` target is an Xcode target that
+imports `AudioPasswordAgentCore` as a local package.
 
 **Deliverable:** `swift build` succeeds with empty stubs.
 
@@ -200,19 +212,46 @@ struct CredentialPayload: Codable {
 
 ---
 
-### Phase 5 — CLI Interface
+### Phase 5 — SwiftUI Interface
 
-The FastAPI layer is a placeholder with no implemented routes, so the
-Swift version replaces it with an `ArgumentParser`-based CLI:
+Build the DAW-style macOS app on top of the Phase 4 core. The UI is split
+into three regions that mirror the design:
 
+**TransportBarView** (top strip)
+- Session lock timer (counts up from unlock, shown as `00:02:48`)
+- Lock/unlock button (triggers master-password prompt via `SecKeychainItem`
+  or a local `@State` sheet)
+- Dark/Light theme toggle
+
+**TimelineView** (main canvas)
+- `ScrollView(.horizontal)` containing `LazyHStack` of time columns
+- Each row = one `TrackRowView` (credential category: Work, Social, etc.)
+- Each colored block = one `ClipView` (a single WAV credential file)
+  - Color assigned per category
+  - Waveform drawn with SwiftUI `Path` from PCM sample amplitudes
+  - Tap to select → opens `EditorPanelView`
+
+**EditorPanelView** (right/bottom sheet — visible in "editor" screenshots)
+- Shows service name, username, masked password with reveal toggle
+- "Knobs" styled as circular `Slider` wrappers → control metadata fields
+- Horizontal sliders → could represent password strength, expiry countdown,
+  or custom metadata values
+- Save button calls `AudioPasswordAgent.storeCredential()`
+
+**Theme:**
+```swift
+extension Color {
+    static let accent    = Color(hex: "#FF6B00")   // orange
+    static let clipPink  = Color(hex: "#FF6B9D")
+    static let clipGreen = Color(hex: "#4CAF82")
+    static let clipBrown = Color(hex: "#C4843A")
+    static let clipBlue  = Color(hex: "#5B8CDB")
+    static let clipSalmon = Color(hex: "#E8736A")
+}
 ```
-audio-pwd store  --audio <file> --service <name> --username <user>
-audio-pwd get    --audio <file> --service <name>
-audio-pwd list
-```
 
-Master password is read from the `MASTER_PASSWORD` environment variable
-(same as `.env.example`), never from a CLI flag.
+Both `.dark` and `.light` color schemes are supported via SwiftUI's
+`.preferredColorScheme` toggle stored in `AppStorage`.
 
 ---
 
@@ -260,6 +299,6 @@ inside `setUpWithError()` using `AVAudioPCMBuffer` written to a temp file.
 - [ ] Phase 2 — `CryptoManager` + cross-language Fernet roundtrip test
 - [ ] Phase 3 — `AudioSteganography` + cross-language WAV roundtrip test
 - [ ] Phase 4 — `AudioPasswordAgent` orchestrator
-- [ ] Phase 5 — CLI interface with `ArgumentParser`
+- [ ] Phase 5 — SwiftUI app (TimelineView, EditorPanelView, TransportBar, themes)
 - [ ] Phase 6 — Full XCTest suite passing
 - [ ] Phase 7 — Cross-validation, cleanup, docs
