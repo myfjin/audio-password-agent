@@ -39,45 +39,45 @@ the Python version is preserved.
 
 ## Critical Technical Constraints
 
-### 1. Fernet Encryption Compatibility
+> **Note.** No backwards-compatibility is required with the Python Fernet
+> format — the user has no credential-carrying WAV files produced by the
+> Python version, only clean audio carriers. The migration therefore
+> adopts modern authenticated encryption from scratch.
 
-The Python code uses `cryptography.fernet.Fernet` (AES-128-CBC +
-HMAC-SHA256). This is a **wire format** — existing WAV files contain
-Fernet tokens that the Swift version must be able to decrypt.
+### 1. Encryption — AES-256-GCM
 
-**Problem:** CryptoKit does **not** expose AES-CBC. It only provides
-AES-GCM and AES-KeyWrap.
+We use **AES-256-GCM** via CryptoKit. GCM is authenticated encryption,
+so we get integrity + confidentiality in one primitive (no separate HMAC
+step, no padding oracle concerns).
 
-**Solution:** Implement the Fernet spec manually using:
-- `CommonCrypto.CCCrypt` for AES-128-CBC encrypt/decrypt
-- `CryptoKit.HMAC<SHA256>` for signing/verification
-- Fernet token layout: `0x80 | timestamp(8B) | IV(16B) | ciphertext | HMAC(32B)`
+Token layout written into each WAV credential payload:
 
-```swift
-// Key split: first 16 bytes = HMAC signing key, last 16 bytes = AES key
-let signingKey  = fernetKey.prefix(16)
-let encryptionKey = fernetKey.suffix(16)
+```
+┌─────────┬─────────────────┬──────────────────────────────┐
+│ version │ nonce (12 B)    │ ciphertext + auth tag (16 B) │
+│ 1 byte  │                 │                              │
+└─────────┴─────────────────┴──────────────────────────────┘
 ```
 
-### 2. Key Derivation Compatibility
+The version byte exists so we can evolve the format later without
+breaking existing vault files.
 
-The Python key derivation is a **non-standard SHA256 chain** (not PBKDF2):
+### 2. Key Derivation — PBKDF2-SHA256 (600 000 iterations)
 
-```python
-key_material = password.encode() + b"audio_pwd_manager_salt_v1"
-for _ in range(100_000):
-    key_material = hashlib.sha256(key_material).digest()
-return base64url_encode(key_material[:32])
-```
-
-This must be replicated exactly in Swift using `CryptoKit.SHA256`:
+We use **PBKDF2-SHA256** with 600 000 iterations (OWASP 2023
+recommendation). PBKDF2 is the industry standard and is available via
+`CommonCrypto.CCKeyDerivationPBKDF`. The master salt lives in a vault
+config file next to the WAV carriers.
 
 ```swift
-var keyMaterial = Data(password.utf8) + Data("audio_pwd_manager_salt_v1".utf8)
-for _ in 0..<100_000 {
-    keyMaterial = Data(SHA256.hash(data: keyMaterial))
-}
-let fernetKey = Data(keyMaterial.prefix(32))
+CCKeyDerivationPBKDF(
+    CCPBKDFAlgorithm(kCCPBKDF2),
+    password, password.count,
+    salt,     salt.count,
+    CCPseudoRandomAlgorithm(kCCPRFHmacAlgSHA256),
+    600_000,
+    &derived, 32
+)
 ```
 
 ### 3. WAV Byte-Level Access
@@ -141,22 +141,28 @@ imports `AudioPasswordAgentCore` as a local package.
 
 ### Phase 2 — CryptoManager
 
-Port `crypto.py` → `CryptoManager.swift`.
+Implements the authenticated-encryption stack in
+`Packages/AudioPasswordAgentCore/Sources/AudioPasswordAgentCore/CryptoManager.swift`.
 
-Tasks:
-- Implement `deriveKey(password:) -> Data` — exact SHA256 chain (100K iters)
-- Implement Fernet `encrypt(data:key:) throws -> Data`
-  - Generate 16-byte random IV via `SystemRandomNumberGenerator`
-  - AES-128-CBC via `CommonCrypto`
-  - HMAC-SHA256 over `version + timestamp + IV + ciphertext`
-  - Concatenate all fields, base64url-encode
-- Implement `decrypt(token:key:) throws -> String`
-  - base64url-decode, split fields
-  - Verify HMAC before decrypting (timing-safe compare)
-  - AES-128-CBC decrypt, strip PKCS7 padding
+Surface:
+- `generateSalt() -> Data` — 16 random bytes via `SecRandomCopyBytes`
+- `deriveKey(password:salt:) throws -> SymmetricKey` — PBKDF2-SHA256,
+  600 000 iterations, 32-byte output
+- `encrypt(_:key:) throws -> Data` — AES-256-GCM with a fresh 12-byte
+  nonce per call; returns `[version | nonce | ciphertext | tag]`
+- `decrypt(_:key:) throws -> String` — parses token, verifies auth tag,
+  returns UTF-8 plaintext
 
-**Validation gate:** Write a cross-language test — encrypt in Python, decrypt
-in Swift and vice versa — before moving to Phase 3.
+Errors surface as `CryptoError` cases:
+`keyDerivationFailed`, `invalidToken(reason:)`,
+`encryptionFailed`, `decryptionFailed`.
+
+**Validation gate:** the XCTest suite in
+`Tests/AudioPasswordAgentCoreTests/CryptoManagerTests.swift` covers:
+determinism, uniqueness, roundtrip, Unicode payloads, nonce freshness,
+wrong-key rejection, tampered-ciphertext rejection, tampered-tag
+rejection, short-token rejection, unknown-version rejection. All green
+before moving to Phase 3.
 
 ---
 
@@ -203,7 +209,7 @@ plain dicts:
 struct CredentialPayload: Codable {
     let service: String
     let username: String
-    let encryptedPassword: String   // base64url Fernet token
+    let encryptedPassword: Data     // AES-GCM token (see Phase 2)
     let timestamp: String
     let version: String
     let customMetadata: [String: String]
@@ -270,13 +276,12 @@ inside `setUpWithError()` using `AVAudioPCMBuffer` written to a temp file.
 
 ---
 
-### Phase 7 — Cross-Validation & Cleanup
+### Phase 7 — Cleanup
 
-- Run full Python test suite and Swift test suite against the **same set of
-  WAV fixtures** to confirm byte-for-byte compatibility
-- Benchmark key derivation (100K SHA256 iters) on target hardware; add a
-  progress indicator if > 1 s
-- Remove Python source once all tests pass and the team is satisfied
+- Confirm full XCTest suite (crypto + audio + agent) green on macOS 13+
+- Benchmark key derivation (600K PBKDF2-SHA256 iters) on target hardware;
+  add a progress indicator if > 1 s
+- Remove Python source once the Swift app fully replaces it
 - Update `README.md` with Swift build/run instructions
 
 ---
@@ -285,19 +290,18 @@ inside `setUpWithError()` using `AVAudioPCMBuffer` written to a temp file.
 
 | Risk | Likelihood | Mitigation |
 |---|---|---|
-| Fernet AES-CBC not in CryptoKit | **Certain** | Use CommonCrypto (Phase 2) |
 | Non-standard WAV headers break offset=44 assumption | Medium | Parse RIFF chunks dynamically (Phase 3) |
-| Timing of HMAC verification | Low | Use `ConstantTimeDataUtils` or compare hashes, not byte-by-byte |
-| Swift on Linux missing CommonCrypto | Medium | Wrap with `#if canImport(CommonCrypto)` + OpenSSL fallback |
-| Key derivation performance | Low | Benchmark early in Phase 2 |
+| Key derivation performance (600K iters) | Low | Benchmark early in Phase 2; derive master key once per session |
+| Vault salt loss equals data loss | **High impact** | Store `vault.config` (with salt) alongside vault WAVs; include in backups |
+| macOS Keychain entitlement issues in sandbox | Low | Config file approach sidesteps Keychain for v1 |
 
 ---
 
 ## Phase Checklist
 
-- [ ] Phase 1 — Package scaffolding, `swift build` green
-- [ ] Phase 2 — `CryptoManager` + cross-language Fernet roundtrip test
-- [ ] Phase 3 — `AudioSteganography` + cross-language WAV roundtrip test
+- [x] Phase 1 — SwiftUI app shell running in Xcode
+- [x] Phase 2 — `CryptoManager` (AES-GCM + PBKDF2) + full XCTest coverage
+- [ ] Phase 3 — `AudioSteganography` + WAV roundtrip test
 - [ ] Phase 4 — `AudioPasswordAgent` orchestrator
 - [ ] Phase 5 — SwiftUI app (TimelineView, EditorPanelView, TransportBar, themes)
 - [ ] Phase 6 — Full XCTest suite passing
