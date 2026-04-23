@@ -59,6 +59,15 @@ struct TransportBarView: View {
             }
             .buttonStyle(.plain)
 
+            // Lock vault
+            Button { vm.lock() } label: {
+                Image(systemName: "lock.fill")
+                    .foregroundStyle(AppTheme.textSecondary(scheme))
+                    .font(.system(size: 13))
+            }
+            .buttonStyle(.plain)
+            .padding(.leading, 8)
+
             // Speaker icon
             Image(systemName: "speaker.wave.2.fill")
                 .foregroundStyle(AppTheme.textSecondary(scheme))
