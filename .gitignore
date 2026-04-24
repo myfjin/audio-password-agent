@@ -40,3 +40,11 @@ htmlcov/
 data/
 logs/
 credentials/
+
+# Xcode / Swift
+xcuserdata/
+*.xcuserstate
+*.xcuserdatad/
+.build/
+DerivedData/
+FETCH_HEAD

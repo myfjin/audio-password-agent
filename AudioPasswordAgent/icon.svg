@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1E1E26"/>
+      <stop offset="100%" stop-color="#0F0F14"/>
+    </linearGradient>
+
+    <!-- Orange bar gradient -->
+    <linearGradient id="orange" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FF8030"/>
+      <stop offset="100%" stop-color="#CC4200"/>
+    </linearGradient>
+
+    <!-- Lock body: slightly brighter -->
+    <linearGradient id="lockGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#FF9040"/>
+      <stop offset="100%" stop-color="#E05000"/>
+    </linearGradient>
+
+    <!-- Subtle radial glow in centre -->
+    <radialGradient id="glow" cx="50%" cy="56%" r="42%">
+      <stop offset="0%"   stop-color="#FF5C00" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FF5C00" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ── Background ── -->
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+  <rect width="1024" height="1024" rx="224" fill="url(#glow)"/>
+
+  <!-- ── Equaliser bars (5 bars, 96 px wide, 36 px gap, bottom at y=810) ── -->
+
+  <!-- Bar 1  x=200  h=150 -->
+  <rect x="200" y="660" width="96" height="150" rx="14" fill="url(#orange)" opacity="0.85"/>
+
+  <!-- Bar 2  x=332  h=290 -->
+  <rect x="332" y="520" width="96" height="290" rx="14" fill="url(#orange)"/>
+
+  <!-- Bar 3 (centre)  x=464  h=420  — connects to lock body bottom at y=390 -->
+  <rect x="464" y="390" width="96" height="420" rx="14" fill="url(#orange)"/>
+
+  <!-- Bar 4  x=596  h=290 -->
+  <rect x="596" y="520" width="96" height="290" rx="14" fill="url(#orange)"/>
+
+  <!-- Bar 5  x=728  h=150 -->
+  <rect x="728" y="660" width="96" height="150" rx="14" fill="url(#orange)" opacity="0.85"/>
+
+  <!-- ── Lock (centred at x=512, body bottom at y=390) ── -->
+
+  <!-- Shackle — thick arc arching above the body                         -->
+  <!-- Posts enter body at y=268, radius=57 → tops out at y=211           -->
+  <path d="M 455 268 A 57 57 0 0 0 569 268"
+        fill="none"
+        stroke="url(#lockGrad)"
+        stroke-width="44"
+        stroke-linecap="round"/>
+
+  <!-- Lock body: 200×130 px, y=260 to y=390 -->
+  <rect x="412" y="260" width="200" height="130" rx="26" fill="url(#lockGrad)"/>
+
+  <!-- Keyhole: circle + drop -->
+  <circle cx="512" cy="312" r="19" fill="#0F0F14" opacity="0.75"/>
+  <rect   x="504" y="312" width="16" height="28" rx="5" fill="#0F0F14" opacity="0.75"/>
+
+  <!-- Subtle highlight line at top of lock body -->
+  <rect x="412" y="260" width="200" height="2" rx="1" fill="white" opacity="0.12"/>
+</svg>

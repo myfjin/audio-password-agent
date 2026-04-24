@@ -1,0 +1,479 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		19E879952F9AE09D0001EBA5 /* VaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E879812F9AE09D0001EBA5 /* VaultManager.swift */; };
+		19E879962F9AE09D0001EBA5 /* ClipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E8798E2F9AE09D0001EBA5 /* ClipView.swift */; };
+		19E879972F9AE09D0001EBA5 /* UnlockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E879932F9AE09D0001EBA5 /* UnlockView.swift */; };
+		19E879982F9AE09D0001EBA5 /* EditorPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E8798A2F9AE09D0001EBA5 /* EditorPanelView.swift */; };
+		19E879992F9AE09D0001EBA5 /* VerticalSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E8798C2F9AE09D0001EBA5 /* VerticalSliderView.swift */; };
+		19E8799A2F9AE09D0001EBA5 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E879862F9AE09D0001EBA5 /* Color+Hex.swift */; };
+		19E8799B2F9AE09D0001EBA5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E8797F2F9AE09D0001EBA5 /* ContentView.swift */; };
+		19E8799C2F9AE09D0001EBA5 /* TransportBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E879922F9AE09D0001EBA5 /* TransportBarView.swift */; };
+		19E8799D2F9AE09D0001EBA5 /* TrackHeadersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E879912F9AE09D0001EBA5 /* TrackHeadersView.swift */; };
+		19E8799E2F9AE09D0001EBA5 /* TimelineTracksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E8798F2F9AE09D0001EBA5 /* TimelineTracksView.swift */; };
+		19E8799F2F9AE09D0001EBA5 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E879802F9AE09D0001EBA5 /* KeychainManager.swift */; };
+		19E879A02F9AE09D0001EBA5 /* AppModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E879832F9AE09D0001EBA5 /* AppModels.swift */; };
+		19E879A12F9AE09D0001EBA5 /* KnobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E8798B2F9AE09D0001EBA5 /* KnobView.swift */; };
+		19E879A22F9AE09D0001EBA5 /* TimelineViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E879882F9AE09D0001EBA5 /* TimelineViewModel.swift */; };
+		19E879A32F9AE09D0001EBA5 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E879852F9AE09D0001EBA5 /* AppTheme.swift */; };
+		19E879A42F9AE09D0001EBA5 /* AudioPasswordAgentApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E8797E2F9AE09D0001EBA5 /* AudioPasswordAgentApp.swift */; };
+		AAC0DE012F9B00000001EBA5 /* AddCredentialSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0DE002F9B00000001EBA5 /* AddCredentialSheet.swift */; };
+		AAC0DE032F9B00010001EBA5 /* AudioConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0DE022F9B00010001EBA5 /* AudioConverter.swift */; };
+		AAC0DE052F9B00020001EBA5 /* EditCredentialSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0DE042F9B00020001EBA5 /* EditCredentialSheet.swift */; };
+		19E879A72F9AE1D50001EBA5 /* AudioPasswordAgentCore in Frameworks */ = {isa = PBXBuildFile; productRef = 19E879A62F9AE1D50001EBA5 /* AudioPasswordAgentCore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		19E879702F9AE0310001EBA5 /* AudioPasswordAgent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AudioPasswordAgent.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		19E8797E2F9AE09D0001EBA5 /* AudioPasswordAgentApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPasswordAgentApp.swift; sourceTree = "<group>"; };
+		19E8797F2F9AE09D0001EBA5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		19E879802F9AE09D0001EBA5 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		19E879812F9AE09D0001EBA5 /* VaultManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultManager.swift; sourceTree = "<group>"; };
+		19E879832F9AE09D0001EBA5 /* AppModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModels.swift; sourceTree = "<group>"; };
+		19E879852F9AE09D0001EBA5 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		19E879862F9AE09D0001EBA5 /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		19E879882F9AE09D0001EBA5 /* TimelineViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineViewModel.swift; sourceTree = "<group>"; };
+		19E8798A2F9AE09D0001EBA5 /* EditorPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorPanelView.swift; sourceTree = "<group>"; };
+		19E8798B2F9AE09D0001EBA5 /* KnobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KnobView.swift; sourceTree = "<group>"; };
+		19E8798C2F9AE09D0001EBA5 /* VerticalSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalSliderView.swift; sourceTree = "<group>"; };
+		19E8798E2F9AE09D0001EBA5 /* ClipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipView.swift; sourceTree = "<group>"; };
+		19E8798F2F9AE09D0001EBA5 /* TimelineTracksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineTracksView.swift; sourceTree = "<group>"; };
+		19E879912F9AE09D0001EBA5 /* TrackHeadersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackHeadersView.swift; sourceTree = "<group>"; };
+		19E879922F9AE09D0001EBA5 /* TransportBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportBarView.swift; sourceTree = "<group>"; };
+		19E879932F9AE09D0001EBA5 /* UnlockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockView.swift; sourceTree = "<group>"; };
+		AAC0DE002F9B00000001EBA5 /* AddCredentialSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCredentialSheet.swift; sourceTree = "<group>"; };
+		AAC0DE042F9B00020001EBA5 /* EditCredentialSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCredentialSheet.swift; sourceTree = "<group>"; };
+		AAC0DE022F9B00010001EBA5 /* AudioConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioConverter.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		19E8796D2F9AE0310001EBA5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				19E879A72F9AE1D50001EBA5 /* AudioPasswordAgentCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		19E879672F9AE0310001EBA5 = {
+			isa = PBXGroup;
+			children = (
+				19E8797E2F9AE09D0001EBA5 /* AudioPasswordAgentApp.swift */,
+				19E8797F2F9AE09D0001EBA5 /* ContentView.swift */,
+				19E879822F9AE09D0001EBA5 /* Managers */,
+				19E879842F9AE09D0001EBA5 /* Models */,
+				19E879872F9AE09D0001EBA5 /* Theme */,
+				19E879892F9AE09D0001EBA5 /* ViewModels */,
+				19E879942F9AE09D0001EBA5 /* Views */,
+				19E879712F9AE0310001EBA5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		19E879712F9AE0310001EBA5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				19E879702F9AE0310001EBA5 /* AudioPasswordAgent.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		19E879822F9AE09D0001EBA5 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				AAC0DE022F9B00010001EBA5 /* AudioConverter.swift */,
+				19E879802F9AE09D0001EBA5 /* KeychainManager.swift */,
+				19E879812F9AE09D0001EBA5 /* VaultManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		19E879842F9AE09D0001EBA5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				19E879832F9AE09D0001EBA5 /* AppModels.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		19E879872F9AE09D0001EBA5 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				19E879852F9AE09D0001EBA5 /* AppTheme.swift */,
+				19E879862F9AE09D0001EBA5 /* Color+Hex.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		19E879892F9AE09D0001EBA5 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				19E879882F9AE09D0001EBA5 /* TimelineViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		19E8798D2F9AE09D0001EBA5 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				19E8798A2F9AE09D0001EBA5 /* EditorPanelView.swift */,
+				19E8798B2F9AE09D0001EBA5 /* KnobView.swift */,
+				19E8798C2F9AE09D0001EBA5 /* VerticalSliderView.swift */,
+			);
+			path = Editor;
+			sourceTree = "<group>";
+		};
+		19E879902F9AE09D0001EBA5 /* Timeline */ = {
+			isa = PBXGroup;
+			children = (
+				19E8798E2F9AE09D0001EBA5 /* ClipView.swift */,
+				19E8798F2F9AE09D0001EBA5 /* TimelineTracksView.swift */,
+			);
+			path = Timeline;
+			sourceTree = "<group>";
+		};
+		19E879942F9AE09D0001EBA5 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				19E8798D2F9AE09D0001EBA5 /* Editor */,
+				19E879902F9AE09D0001EBA5 /* Timeline */,
+				AAC0DE002F9B00000001EBA5 /* AddCredentialSheet.swift */,
+				AAC0DE042F9B00020001EBA5 /* EditCredentialSheet.swift */,
+				19E879912F9AE09D0001EBA5 /* TrackHeadersView.swift */,
+				19E879922F9AE09D0001EBA5 /* TransportBarView.swift */,
+				19E879932F9AE09D0001EBA5 /* UnlockView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		19E8796F2F9AE0310001EBA5 /* AudioPasswordAgent */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 19E8797B2F9AE0360001EBA5 /* Build configuration list for PBXNativeTarget "AudioPasswordAgent" */;
+			buildPhases = (
+				19E8796C2F9AE0310001EBA5 /* Sources */,
+				19E8796D2F9AE0310001EBA5 /* Frameworks */,
+				19E8796E2F9AE0310001EBA5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AudioPasswordAgent;
+			packageProductDependencies = (
+				19E879A62F9AE1D50001EBA5 /* AudioPasswordAgentCore */,
+			);
+			productName = AudioPasswordAgent;
+			productReference = 19E879702F9AE0310001EBA5 /* AudioPasswordAgent.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		19E879682F9AE0310001EBA5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					19E8796F2F9AE0310001EBA5 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
+				};
+			};
+			buildConfigurationList = 19E8796B2F9AE0310001EBA5 /* Build configuration list for PBXProject "AudioPasswordAgent" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 19E879672F9AE0310001EBA5;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				19E879A52F9AE1D50001EBA5 /* XCLocalSwiftPackageReference "../Packages/AudioPasswordAgentCore" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 19E879712F9AE0310001EBA5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				19E8796F2F9AE0310001EBA5 /* AudioPasswordAgent */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		19E8796E2F9AE0310001EBA5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		19E8796C2F9AE0310001EBA5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				19E879952F9AE09D0001EBA5 /* VaultManager.swift in Sources */,
+				19E879962F9AE09D0001EBA5 /* ClipView.swift in Sources */,
+				19E879972F9AE09D0001EBA5 /* UnlockView.swift in Sources */,
+				19E879982F9AE09D0001EBA5 /* EditorPanelView.swift in Sources */,
+				19E879992F9AE09D0001EBA5 /* VerticalSliderView.swift in Sources */,
+				19E8799A2F9AE09D0001EBA5 /* Color+Hex.swift in Sources */,
+				19E8799B2F9AE09D0001EBA5 /* ContentView.swift in Sources */,
+				19E8799C2F9AE09D0001EBA5 /* TransportBarView.swift in Sources */,
+				19E8799D2F9AE09D0001EBA5 /* TrackHeadersView.swift in Sources */,
+				19E8799E2F9AE09D0001EBA5 /* TimelineTracksView.swift in Sources */,
+				19E8799F2F9AE09D0001EBA5 /* KeychainManager.swift in Sources */,
+				19E879A02F9AE09D0001EBA5 /* AppModels.swift in Sources */,
+				19E879A12F9AE09D0001EBA5 /* KnobView.swift in Sources */,
+				19E879A22F9AE09D0001EBA5 /* TimelineViewModel.swift in Sources */,
+				19E879A32F9AE09D0001EBA5 /* AppTheme.swift in Sources */,
+				19E879A42F9AE09D0001EBA5 /* AudioPasswordAgentApp.swift in Sources */,
+				AAC0DE012F9B00000001EBA5 /* AddCredentialSheet.swift in Sources */,
+				AAC0DE032F9B00010001EBA5 /* AudioConverter.swift in Sources */,
+				AAC0DE052F9B00020001EBA5 /* EditCredentialSheet.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		19E879792F9AE0360001EBA5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = SMZQ4U7KMA;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		19E8797A2F9AE0360001EBA5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = SMZQ4U7KMA;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		19E8797C2F9AE0360001EBA5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SMZQ4U7KMA;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = freedomform.AudioPasswordAgent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		19E8797D2F9AE0360001EBA5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SMZQ4U7KMA;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = freedomform.AudioPasswordAgent;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		19E8796B2F9AE0310001EBA5 /* Build configuration list for PBXProject "AudioPasswordAgent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				19E879792F9AE0360001EBA5 /* Debug */,
+				19E8797A2F9AE0360001EBA5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		19E8797B2F9AE0360001EBA5 /* Build configuration list for PBXNativeTarget "AudioPasswordAgent" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				19E8797C2F9AE0360001EBA5 /* Debug */,
+				19E8797D2F9AE0360001EBA5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		19E879A52F9AE1D50001EBA5 /* XCLocalSwiftPackageReference "../Packages/AudioPasswordAgentCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Packages/AudioPasswordAgentCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		19E879A62F9AE1D50001EBA5 /* AudioPasswordAgentCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AudioPasswordAgentCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 19E879682F9AE0310001EBA5 /* Project object */;
+}
