@@ -76,12 +76,23 @@ enum CarrierLibrary {
         return url
     }
 
-    /// Unique temp WAV for the "Auto-generate" option.
+    /// Unique temp WAV for the "Auto-generate" option (used when saving).
     static func generateRandomWAV() throws -> URL {
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent("carrier_\(UUID().uuidString).wav")
         try buildWAV(samples: whiteNoise(seed: UInt64(Date().timeIntervalSince1970 * 1000)),
                      sampleRate: sampleRate).write(to: url)
+        return url
+    }
+
+    /// Stable temp WAV for the "Auto-generate" preview button — regenerated once per session.
+    static func previewURL() throws -> URL {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("carrier_preview.wav")
+        if !FileManager.default.fileExists(atPath: url.path) {
+            try buildWAV(samples: whiteNoise(seed: 0xDEADBEEF),
+                         sampleRate: sampleRate).write(to: url)
+        }
         return url
     }
 

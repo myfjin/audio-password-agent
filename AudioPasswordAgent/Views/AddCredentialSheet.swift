@@ -1,19 +1,22 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import AVFoundation
+import Combine
 
 struct AddCredentialSheet: View {
     @EnvironmentObject var vm: TimelineViewModel
     @Environment(\.dismiss) var dismiss
 
-    @State private var service:           String          = ""
-    @State private var username:          String          = ""
-    @State private var password:          String          = ""
-    @State private var showPassword:      Bool            = false
-    @State private var trackName:         String          = ""
+    @State private var service:           String           = ""
+    @State private var username:          String           = ""
+    @State private var password:          String           = ""
+    @State private var showPassword:      Bool             = false
+    @State private var trackName:         String           = ""
     @State private var carrierSelection:  CarrierSelection = .autoGenerate
-    @State private var errorMessage:      String          = ""
-    @State private var isSaving:          Bool            = false
-    @State private var showFilePicker:    Bool            = false
+    @State private var errorMessage:      String           = ""
+    @State private var isSaving:          Bool             = false
+    @State private var showFilePicker:    Bool             = false
+    @StateObject private var preview = CarrierPreviewPlayer()
 
     private var existingTracks: [String] { vm.tracks.map(\.name) }
 
@@ -39,6 +42,7 @@ struct AddCredentialSheet: View {
         }
         .frame(width: 420)
         .background(Color(hex: "1E1E22"))
+        .onDisappear { preview.stop() }
         .fileImporter(
             isPresented: $showFilePicker,
             allowedContentTypes: [UTType.audio, UTType(filenameExtension: "wav")!],
@@ -46,6 +50,7 @@ struct AddCredentialSheet: View {
         ) { result in
             if case .success(let urls) = result, let url = urls.first {
                 carrierSelection = .custom(url)
+                preview.stop()
             }
         }
     }
@@ -125,8 +130,8 @@ struct AddCredentialSheet: View {
     private var carrierField: some View {
         VStack(alignment: .leading, spacing: 8) {
             sectionLabel("Audio Carrier")
-            HStack(spacing: 10) {
-                // Current selection label
+            HStack(spacing: 8) {
+                // Selection label
                 HStack(spacing: 6) {
                     Image(systemName: selectionIcon)
                         .font(.system(size: 12))
@@ -138,16 +143,26 @@ struct AddCredentialSheet: View {
                         .truncationMode(.middle)
                 }
                 .padding(.horizontal, 10)
-                .frame(height: 28)
+                .frame(maxWidth: .infinity, minHeight: 28, alignment: .leading)
                 .background(Color.white.opacity(0.06))
                 .clipShape(RoundedRectangle(cornerRadius: 7))
 
-                Spacer()
+                // Play / stop preview
+                Button { togglePreview() } label: {
+                    Image(systemName: preview.isPlaying ? "stop.fill" : "play.fill")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(preview.isPlaying ? AppTheme.accent : Color.white.opacity(0.6))
+                        .frame(width: 28, height: 28)
+                        .background(Color.white.opacity(0.06))
+                        .clipShape(RoundedRectangle(cornerRadius: 7))
+                }
+                .buttonStyle(.plain)
 
-                // Picker menu
+                // Change menu
                 Menu {
                     Button {
                         carrierSelection = .autoGenerate
+                        preview.stop()
                     } label: {
                         Label("Auto-generate", systemImage: "wand.and.stars")
                     }
@@ -157,6 +172,7 @@ struct AddCredentialSheet: View {
                     ForEach(CarrierStyle.allCases, id: \.rawValue) { style in
                         Button {
                             carrierSelection = .builtIn(style)
+                            preview.stop()
                         } label: {
                             Label(style.displayName, systemImage: style.icon)
                         }
@@ -164,9 +180,7 @@ struct AddCredentialSheet: View {
 
                     Divider()
 
-                    Button {
-                        showFilePicker = true
-                    } label: {
+                    Button { showFilePicker = true } label: {
                         Label("Choose my own WAV…", systemImage: "folder")
                     }
                 } label: {
@@ -217,6 +231,33 @@ struct AddCredentialSheet: View {
         }
     }
 
+    // MARK: - Preview
+
+    private func togglePreview() {
+        if preview.isPlaying {
+            preview.stop()
+            return
+        }
+        Task {
+            do {
+                let url: URL
+                switch carrierSelection {
+                case .autoGenerate:
+                    url = try CarrierLibrary.previewURL()
+                case .builtIn(let style):
+                    url = try CarrierLibrary.wavURL(for: style)
+                case .custom(let source):
+                    let accessed = source.startAccessingSecurityScopedResource()
+                    defer { if accessed { source.stopAccessingSecurityScopedResource() } }
+                    url = try AudioConverter.convertToPCMWAV(from: source)
+                }
+                await MainActor.run { preview.play(url: url) }
+            } catch {
+                // Silently ignore preview failures
+            }
+        }
+    }
+
     // MARK: - Action bar
 
     private var actionBar: some View {
@@ -253,6 +294,7 @@ struct AddCredentialSheet: View {
     private func save() {
         errorMessage = ""
         isSaving = true
+        preview.stop()
 
         Task {
             var tempURL: URL? = nil
@@ -263,8 +305,7 @@ struct AddCredentialSheet: View {
                 switch carrierSelection {
                 case .autoGenerate:
                     let tmp = try CarrierLibrary.generateRandomWAV()
-                    tempURL = tmp
-                    carrier = tmp
+                    tempURL = tmp; carrier = tmp
 
                 case .builtIn(let style):
                     carrier = try CarrierLibrary.wavURL(for: style)
@@ -273,8 +314,7 @@ struct AddCredentialSheet: View {
                     let accessed = source.startAccessingSecurityScopedResource()
                     defer { if accessed { source.stopAccessingSecurityScopedResource() } }
                     let converted = try AudioConverter.convertToPCMWAV(from: source)
-                    tempURL = converted
-                    carrier = converted
+                    tempURL = converted; carrier = converted
                 }
 
                 let folder = trackName.trimmingCharacters(in: .whitespaces).isEmpty
@@ -282,11 +322,8 @@ struct AddCredentialSheet: View {
                     : trackName.trimmingCharacters(in: .whitespaces)
 
                 try vm.addCredential(
-                    service: service,
-                    username: username,
-                    password: password,
-                    carrierURL: carrier,
-                    folderName: folder
+                    service: service, username: username, password: password,
+                    carrierURL: carrier, folderName: folder
                 )
                 dismiss()
             } catch {
@@ -311,6 +348,31 @@ struct AddCredentialSheet: View {
             .font(.system(size: 10, weight: .semibold))
             .foregroundStyle(Color.white.opacity(0.4))
             .tracking(1)
+    }
+}
+
+// MARK: - Preview player
+
+private final class CarrierPreviewPlayer: NSObject, ObservableObject, AVAudioPlayerDelegate {
+    @Published var isPlaying = false
+    private var player: AVAudioPlayer?
+
+    func play(url: URL) {
+        player?.stop()
+        guard let p = try? AVAudioPlayer(contentsOf: url) else { return }
+        p.delegate = self
+        p.play()
+        player = p
+        isPlaying = true
+    }
+
+    func stop() {
+        player?.stop()
+        isPlaying = false
+    }
+
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully _: Bool) {
+        DispatchQueue.main.async { self.isPlaying = false }
     }
 }
 
