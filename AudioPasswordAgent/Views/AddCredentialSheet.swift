@@ -5,19 +5,17 @@ struct AddCredentialSheet: View {
     @EnvironmentObject var vm: TimelineViewModel
     @Environment(\.dismiss) var dismiss
 
-    @State private var service:        String = ""
-    @State private var username:       String = ""
-    @State private var password:       String = ""
-    @State private var showPassword:   Bool   = false
-    @State private var trackName:      String = ""
-    @State private var carrierURL:     URL?   = nil
-    @State private var errorMessage:   String = ""
-    @State private var isSaving:       Bool   = false
-    @State private var showFilePicker: Bool   = false
+    @State private var service:           String          = ""
+    @State private var username:          String          = ""
+    @State private var password:          String          = ""
+    @State private var showPassword:      Bool            = false
+    @State private var trackName:         String          = ""
+    @State private var carrierSelection:  CarrierSelection = .autoGenerate
+    @State private var errorMessage:      String          = ""
+    @State private var isSaving:          Bool            = false
+    @State private var showFilePicker:    Bool            = false
 
-    private var existingTracks: [String] {
-        vm.tracks.map(\.name)
-    }
+    private var existingTracks: [String] { vm.tracks.map(\.name) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -39,15 +37,15 @@ struct AddCredentialSheet: View {
             Divider().background(Color.white.opacity(0.1))
             actionBar
         }
-        .frame(width: 400)
+        .frame(width: 420)
         .background(Color(hex: "1E1E22"))
         .fileImporter(
             isPresented: $showFilePicker,
             allowedContentTypes: [UTType.audio, UTType(filenameExtension: "wav")!],
             allowsMultipleSelection: false
         ) { result in
-            if case .success(let urls) = result {
-                carrierURL = urls.first
+            if case .success(let urls) = result, let url = urls.first {
+                carrierSelection = .custom(url)
             }
         }
     }
@@ -89,9 +87,7 @@ struct AddCredentialSheet: View {
                         .clipShape(RoundedRectangle(cornerRadius: 7))
                         .foregroundStyle(.white)
                 }
-                Button {
-                    showPassword.toggle()
-                } label: {
+                Button { showPassword.toggle() } label: {
                     Image(systemName: showPassword ? "eye.slash" : "eye")
                         .font(.system(size: 13))
                         .foregroundStyle(AppTheme.accent)
@@ -128,27 +124,96 @@ struct AddCredentialSheet: View {
 
     private var carrierField: some View {
         VStack(alignment: .leading, spacing: 8) {
-            sectionLabel("Carrier WAV")
+            sectionLabel("Audio Carrier")
             HStack(spacing: 10) {
-                if let url = carrierURL {
-                    Text(url.lastPathComponent)
+                // Current selection label
+                HStack(spacing: 6) {
+                    Image(systemName: selectionIcon)
+                        .font(.system(size: 12))
+                        .foregroundStyle(AppTheme.accent)
+                    Text(carrierSelection.displayName)
                         .font(AppTheme.Font.label)
                         .foregroundStyle(.white)
                         .lineLimit(1)
                         .truncationMode(.middle)
-                } else {
-                    Text("No file selected")
-                        .font(AppTheme.Font.label)
-                        .foregroundStyle(Color.white.opacity(0.3))
                 }
+                .padding(.horizontal, 10)
+                .frame(height: 28)
+                .background(Color.white.opacity(0.06))
+                .clipShape(RoundedRectangle(cornerRadius: 7))
+
                 Spacer()
-                Button("Choose…") { showFilePicker = true }
-                    .buttonStyle(OutlineButtonStyle())
+
+                // Picker menu
+                Menu {
+                    Button {
+                        carrierSelection = .autoGenerate
+                    } label: {
+                        Label("Auto-generate", systemImage: "wand.and.stars")
+                    }
+
+                    Divider()
+
+                    ForEach(CarrierStyle.allCases, id: \.rawValue) { style in
+                        Button {
+                            carrierSelection = .builtIn(style)
+                        } label: {
+                            Label(style.displayName, systemImage: style.icon)
+                        }
+                    }
+
+                    Divider()
+
+                    Button {
+                        showFilePicker = true
+                    } label: {
+                        Label("Choose my own WAV…", systemImage: "folder")
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("Change")
+                            .font(AppTheme.Font.label)
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 9, weight: .semibold))
+                    }
+                    .foregroundStyle(Color.white.opacity(0.7))
+                    .padding(.horizontal, 12)
+                    .frame(height: 28)
+                    .background(Color.white.opacity(0.07))
+                    .clipShape(RoundedRectangle(cornerRadius: 7))
+                }
+                .menuStyle(.borderlessButton)
+                .fixedSize()
             }
-            Text("A copy of this WAV will be saved to the vault with your credential embedded.")
+            carrierHint
+        }
+    }
+
+    @ViewBuilder
+    private var carrierHint: some View {
+        switch carrierSelection {
+        case .autoGenerate:
+            Text("A unique noise clip is generated automatically — no audio file needed.")
                 .font(.caption)
                 .foregroundStyle(Color.white.opacity(0.3))
                 .fixedSize(horizontal: false, vertical: true)
+        case .builtIn(let style):
+            Text("\(style.displayName) — a built-in synthetic audio clip.")
+                .font(.caption)
+                .foregroundStyle(Color.white.opacity(0.3))
+        case .custom:
+            Text("Your file will be converted to PCM WAV and saved to the vault.")
+                .font(.caption)
+                .foregroundStyle(Color.white.opacity(0.3))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    private var selectionIcon: String {
+        switch carrierSelection {
+        case .autoGenerate:       return "wand.and.stars"
+        case .builtIn(let style): return style.icon
+        case .custom:             return "waveform"
         }
     }
 
@@ -164,8 +229,7 @@ struct AddCredentialSheet: View {
                     if isSaving {
                         ProgressView().controlSize(.small).tint(.white)
                     } else {
-                        Text("Save")
-                            .fontWeight(.semibold)
+                        Text("Save").fontWeight(.semibold)
                     }
                 }
                 .frame(width: 64, height: 28)
@@ -183,37 +247,40 @@ struct AddCredentialSheet: View {
     // MARK: - Helpers
 
     private var canSave: Bool {
-        !service.isEmpty && !username.isEmpty && !password.isEmpty && carrierURL != nil
+        !service.isEmpty && !username.isEmpty && !password.isEmpty
     }
 
     private func save() {
-        guard let source = carrierURL else { return }
         errorMessage = ""
         isSaving = true
 
         Task {
-            // fileImporter returns a security-scoped URL — must unlock before reading
-            let accessed = source.startAccessingSecurityScopedResource()
-            defer { if accessed { source.stopAccessingSecurityScopedResource() } }
-
             var tempURL: URL? = nil
             defer { tempURL.map { try? FileManager.default.removeItem(at: $0) } }
 
             do {
-                // Convert to PCM WAV if needed (handles CAF, AIFF, compressed WAV, etc.)
                 let carrier: URL
-                do {
-                    carrier = try AudioConverter.convertToPCMWAV(from: source)
-                    tempURL = carrier
-                } catch {
-                    errorMessage = "Could not convert audio: \(error.localizedDescription)"
-                    isSaving = false
-                    return
+                switch carrierSelection {
+                case .autoGenerate:
+                    let tmp = try CarrierLibrary.generateRandomWAV()
+                    tempURL = tmp
+                    carrier = tmp
+
+                case .builtIn(let style):
+                    carrier = try CarrierLibrary.wavURL(for: style)
+
+                case .custom(let source):
+                    let accessed = source.startAccessingSecurityScopedResource()
+                    defer { if accessed { source.stopAccessingSecurityScopedResource() } }
+                    let converted = try AudioConverter.convertToPCMWAV(from: source)
+                    tempURL = converted
+                    carrier = converted
                 }
 
                 let folder = trackName.trimmingCharacters(in: .whitespaces).isEmpty
                     ? "General"
                     : trackName.trimmingCharacters(in: .whitespaces)
+
                 try vm.addCredential(
                     service: service,
                     username: username,

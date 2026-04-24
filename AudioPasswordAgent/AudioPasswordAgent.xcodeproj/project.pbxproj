@@ -26,6 +26,7 @@
 		AAC0DE012F9B00000001EBA5 /* AddCredentialSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0DE002F9B00000001EBA5 /* AddCredentialSheet.swift */; };
 		AAC0DE032F9B00010001EBA5 /* AudioConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0DE022F9B00010001EBA5 /* AudioConverter.swift */; };
 		AAC0DE052F9B00020001EBA5 /* EditCredentialSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0DE042F9B00020001EBA5 /* EditCredentialSheet.swift */; };
+		AAC0DE062F9B00030001EBA5 /* CarrierLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0DE072F9B00030001EBA5 /* CarrierLibrary.swift */; };
 		19E879A72F9AE1D50001EBA5 /* AudioPasswordAgentCore in Frameworks */ = {isa = PBXBuildFile; productRef = 19E879A62F9AE1D50001EBA5 /* AudioPasswordAgentCore */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +51,7 @@
 		AAC0DE002F9B00000001EBA5 /* AddCredentialSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCredentialSheet.swift; sourceTree = "<group>"; };
 		AAC0DE042F9B00020001EBA5 /* EditCredentialSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCredentialSheet.swift; sourceTree = "<group>"; };
 		AAC0DE022F9B00010001EBA5 /* AudioConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioConverter.swift; sourceTree = "<group>"; };
+		AAC0DE072F9B00030001EBA5 /* CarrierLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarrierLibrary.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				AAC0DE022F9B00010001EBA5 /* AudioConverter.swift */,
+				AAC0DE072F9B00030001EBA5 /* CarrierLibrary.swift */,
 				19E879802F9AE09D0001EBA5 /* KeychainManager.swift */,
 				19E879812F9AE09D0001EBA5 /* VaultManager.swift */,
 			);
@@ -248,6 +251,7 @@
 				AAC0DE012F9B00000001EBA5 /* AddCredentialSheet.swift in Sources */,
 				AAC0DE032F9B00010001EBA5 /* AudioConverter.swift in Sources */,
 				AAC0DE052F9B00020001EBA5 /* EditCredentialSheet.swift in Sources */,
+				AAC0DE062F9B00030001EBA5 /* CarrierLibrary.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
