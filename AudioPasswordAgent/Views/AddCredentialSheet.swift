@@ -16,9 +16,27 @@ struct AddCredentialSheet: View {
     @State private var errorMessage:      String           = ""
     @State private var isSaving:          Bool             = false
     @State private var showFilePicker:    Bool             = false
+    @State private var validated:         Bool             = false   // flips on first save tap
     @StateObject private var preview = CarrierPreviewPlayer()
 
     private var existingTracks: [String] { vm.tracks.map(\.name) }
+
+    // MARK: - Validation
+
+    private var serviceError:  String? { validated ? error(service.trimmed,  min: 2, label: "Service") : nil }
+    private var usernameError: String? { validated ? error(username.trimmed, min: 3, label: "Username") : nil }
+    private var passwordError: String? {
+        guard validated else { return nil }
+        if password.isEmpty { return "Password is required" }
+        if password.count < 6 { return "Password must be at least 6 characters" }
+        return nil
+    }
+
+    private func error(_ value: String, min: Int, label: String) -> String? {
+        if value.isEmpty { return "\(label) is required" }
+        if value.count < min { return "\(label) must be at least \(min) characters" }
+        return nil
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -79,25 +97,32 @@ struct AddCredentialSheet: View {
     private var credentialFields: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionLabel("Credential")
-            field(placeholder: "Service  (e.g. GitHub)", text: $service)
-            field(placeholder: "Username / email", text: $username)
-            HStack(spacing: 8) {
-                if showPassword {
-                    field(placeholder: "Password", text: $password)
-                } else {
-                    SecureField("Password", text: $password)
-                        .textFieldStyle(.plain)
-                        .padding(9)
-                        .background(Color.white.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: 7))
-                        .foregroundStyle(.white)
+            validatedField(placeholder: "Service  (e.g. GitHub)", text: $service, error: serviceError)
+            validatedField(placeholder: "Username / email", text: $username, error: usernameError)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
+                    if showPassword {
+                        field(placeholder: "Password", text: $password, invalid: passwordError != nil)
+                    } else {
+                        SecureField("Password", text: $password)
+                            .textFieldStyle(.plain)
+                            .padding(9)
+                            .background(Color.white.opacity(0.06))
+                            .clipShape(RoundedRectangle(cornerRadius: 7))
+                            .foregroundStyle(.white)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 7)
+                                    .stroke(passwordError != nil ? Color(hex: "FF5C5C").opacity(0.7) : Color.clear, lineWidth: 1)
+                            )
+                    }
+                    Button { showPassword.toggle() } label: {
+                        Image(systemName: showPassword ? "eye.slash" : "eye")
+                            .font(.system(size: 13))
+                            .foregroundStyle(AppTheme.accent)
+                    }
+                    .buttonStyle(.plain)
                 }
-                Button { showPassword.toggle() } label: {
-                    Image(systemName: showPassword ? "eye.slash" : "eye")
-                        .font(.system(size: 13))
-                        .foregroundStyle(AppTheme.accent)
-                }
-                .buttonStyle(.plain)
+                if let e = passwordError { fieldError(e) }
             }
         }
     }
@@ -288,10 +313,12 @@ struct AddCredentialSheet: View {
     // MARK: - Helpers
 
     private var canSave: Bool {
-        !service.isEmpty && !username.isEmpty && !password.isEmpty
+        service.trimmed.count >= 2 && username.trimmed.count >= 3 && password.count >= 6
     }
 
     private func save() {
+        validated = true
+        guard canSave else { return }
         errorMessage = ""
         isSaving = true
         preview.stop()
@@ -334,13 +361,32 @@ struct AddCredentialSheet: View {
     }
 
     @ViewBuilder
-    private func field(placeholder: String, text: Binding<String>) -> some View {
+    private func validatedField(placeholder: String, text: Binding<String>, error: String?) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            field(placeholder: placeholder, text: text, invalid: error != nil)
+            if let e = error { fieldError(e) }
+        }
+    }
+
+    @ViewBuilder
+    private func field(placeholder: String, text: Binding<String>, invalid: Bool = false) -> some View {
         TextField(placeholder, text: text)
             .textFieldStyle(.plain)
             .padding(9)
             .background(Color.white.opacity(0.06))
             .clipShape(RoundedRectangle(cornerRadius: 7))
             .foregroundStyle(.white)
+            .overlay(
+                RoundedRectangle(cornerRadius: 7)
+                    .stroke(invalid ? Color(hex: "FF5C5C").opacity(0.7) : Color.clear, lineWidth: 1)
+            )
+    }
+
+    private func fieldError(_ message: String) -> some View {
+        Text(message)
+            .font(.system(size: 10))
+            .foregroundStyle(Color(hex: "FF5C5C"))
+            .padding(.leading, 4)
     }
 
     private func sectionLabel(_ title: String) -> some View {
@@ -349,6 +395,12 @@ struct AddCredentialSheet: View {
             .foregroundStyle(Color.white.opacity(0.4))
             .tracking(1)
     }
+}
+
+// MARK: - Helpers
+
+private extension String {
+    var trimmed: String { trimmingCharacters(in: .whitespaces) }
 }
 
 // MARK: - Preview player
