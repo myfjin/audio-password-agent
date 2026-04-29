@@ -41,24 +41,75 @@ public final class AudioPasswordAgent {
             at: vaultDirectory, withIntermediateDirectories: true
         )
 
-        let config: VaultConfig
+        var config: VaultConfig
+        let isFreshVault: Bool
         if let existing = try VaultConfig.load(from: vaultDirectory) {
             config = existing
+            isFreshVault = false
         } else {
             let salt = CryptoManager.generateSalt()
             config = VaultConfig(
                 version:       VaultConfig.currentVersion,
                 masterSalt:    salt,
                 kdfIterations: CryptoManager.kdfIterations,
-                createdAt:     ISO8601DateFormatter().string(from: Date())
+                createdAt:     ISO8601DateFormatter().string(from: Date()),
+                verifier:      nil
             )
-            try config.save(to: vaultDirectory)
+            isFreshVault = true
         }
 
-        self.masterKey = try CryptoManager.deriveKey(
+        let key = try CryptoManager.deriveKey(
             password: masterPassword,
             salt:     config.masterSalt
         )
+        self.masterKey = key
+
+        // --- Password verification ---
+        if let verifier = config.verifier {
+            // Vault has a verifier — decrypt to confirm the password matches.
+            let plain: String
+            do {
+                plain = try CryptoManager.decrypt(verifier, key: key)
+            } catch {
+                throw VaultError.wrongMasterPassword
+            }
+            guard plain == VaultConfig.verifierMarker else {
+                throw VaultError.wrongMasterPassword
+            }
+        } else {
+            // No verifier yet — fresh vault OR legacy vault (pre-fix).
+            // For legacy vaults, verify against an existing credential first.
+            if !isFreshVault, let sample = Self.findCredentialWAV(in: vaultDirectory) {
+                do {
+                    let raw     = try AudioSteganography.extract(fromAudioAt: sample)
+                    let payload = try JSONDecoder().decode(CredentialPayload.self, from: raw)
+                    guard let tokenData = Data(base64Encoded: payload.encryptedToken) else {
+                        throw VaultError.corruptCredential(reason: "bad base64")
+                    }
+                    _ = try CryptoManager.decrypt(tokenData, key: key)
+                } catch {
+                    throw VaultError.wrongMasterPassword
+                }
+            }
+            // Password is correct (or vault is empty) — write the verifier so
+            // future unlocks can be checked instantly.
+            let token = try CryptoManager.encrypt(VaultConfig.verifierMarker, key: key)
+            config.verifier = token
+            try config.save(to: vaultDirectory)
+        }
+    }
+
+    /// Recursively find any credential WAV in the vault — used to validate
+    /// the master password on legacy vaults that have no verifier token.
+    private static func findCredentialWAV(in directory: URL) -> URL? {
+        guard let enumerator = FileManager.default.enumerator(
+            at: directory,
+            includingPropertiesForKeys: [.isRegularFileKey]
+        ) else { return nil }
+        for case let url as URL in enumerator {
+            if url.pathExtension.lowercased() == "wav" { return url }
+        }
+        return nil
     }
 
     // MARK: - Store

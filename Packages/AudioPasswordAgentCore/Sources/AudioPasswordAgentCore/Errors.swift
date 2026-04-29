@@ -38,3 +38,14 @@ public enum VaultError: Error, Equatable {
     case corruptCredential(reason: String)
     case wrongMasterPassword
 }
+
+extension VaultError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .vaultDirectoryUnreadable(let r): return "Vault directory unreadable: \(r)"
+        case .corruptConfig(let r):            return "Corrupt vault config: \(r)"
+        case .corruptCredential(let r):        return "Corrupt credential: \(r)"
+        case .wrongMasterPassword:             return "Wrong master password."
+        }
+    }
+}
