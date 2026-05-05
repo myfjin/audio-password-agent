@@ -1,8 +1,9 @@
+
 import Foundation
 import Security
 
 enum KeychainManager {
-    private static let service = "com.audiopasswordagent"
+    private static let service = "io.github.myfjin.audiopasswdmanager"
     private static let account = "master-password"
 
     static func save(password: String) {
