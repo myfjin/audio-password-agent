@@ -42,7 +42,7 @@ enum AppTheme {
 
     // MARK: - Layout constants
     enum Layout {
-        static let trackHeaderWidth: CGFloat = 132
+        static let trackHeaderWidth: CGFloat = 240
         static let trackHeight:      CGFloat = 64
         static let transportHeight:  CGFloat = 48
         static let clipCornerRadius: CGFloat = 8

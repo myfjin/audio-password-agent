@@ -32,6 +32,7 @@ struct ContentView: View {
                 HStack(spacing: 0) {
                     TrackHeadersView()
                         .frame(width: AppTheme.Layout.trackHeaderWidth)
+                        .frame(maxHeight: .infinity, alignment: .top)
 
                     Divider()
                         .background(AppTheme.border(scheme))
