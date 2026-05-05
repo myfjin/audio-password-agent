@@ -36,11 +36,13 @@ final class VaultManager {
 
     // MARK: - Setup
 
-    func setup(password: String) throws {
-        agent = try audiopasswdmanager(
-            masterPassword: password,
-            vaultDirectory: Self.vaultDirectory
-        )
+    func setup(password: String) async throws {
+        let pwd = password
+        let dir = Self.vaultDirectory
+        // audiopasswdmanager.init runs PBKDF2 (600k iterations) — detach off main thread
+        agent = try await Task.detached(priority: .userInitiated) {
+            try audiopasswdmanager(masterPassword: pwd, vaultDirectory: dir)
+        }.value
     }
 
     // MARK: - Load tracks from vault subdirectory structure
@@ -109,5 +111,22 @@ final class VaultManager {
     func retrievePassword(fromAudioAt url: URL) throws -> String {
         guard let agent else { return "" }
         return try agent.retrieveCredential(fromAudioAt: url).password
+    }
+
+    func updateCredential(service: String, username: String, password: String, at url: URL) throws {
+        try agent?.storeCredential(
+            service: service, username: username, password: password,
+            intoAudioAt: url, writingTo: url
+        )
+    }
+
+    func deleteCredential(at url: URL) throws {
+        try FileManager.default.removeItem(at: url)
+        // Remove parent folder if it became empty (ignore errors)
+        let parent = url.deletingLastPathComponent()
+        let remaining = (try? FileManager.default.contentsOfDirectory(atPath: parent.path)) ?? []
+        if remaining.isEmpty && parent != Self.vaultDirectory {
+            try? FileManager.default.removeItem(at: parent)
+        }
     }
 }

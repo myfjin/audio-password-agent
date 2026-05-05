@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct AudioPasswordAgentApp: App {
+struct audiopasswdmanagerApp: App {
     @StateObject private var vm = TimelineViewModel()
 
     var body: some Scene {
