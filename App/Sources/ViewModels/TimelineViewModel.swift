@@ -11,6 +11,7 @@ final class TimelineViewModel: ObservableObject {
     @Published var sessionSeconds: Int      = 0
     @Published var isDarkMode: Bool         = true
     @Published var isLocked: Bool           = true
+    @Published var showAddCredential: Bool  = false
 
     var colorScheme: ColorScheme { isDarkMode ? .dark : .light }
 
@@ -46,6 +47,22 @@ final class TimelineViewModel: ObservableObject {
 
     func reloadTracks() {
         tracks = vaultManager?.loadTracks() ?? []
+    }
+
+    // MARK: - Store credential
+
+    func storeCredential(
+        service:  String,
+        username: String,
+        password: String,
+        source:   URL,
+        output:   URL
+    ) throws {
+        guard let manager = vaultManager else { return }
+        try manager.storeCredential(
+            service: service, username: username, password: password,
+            source: source, output: output
+        )
     }
 
     // MARK: - Credential reveal

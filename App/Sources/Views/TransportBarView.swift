@@ -49,6 +49,19 @@ struct TransportBarView: View {
 
             Spacer().frame(width: 8)
 
+            // Add credential
+            Button { vm.showAddCredential = true } label: {
+                Image(systemName: "plus.circle.fill")
+                    .foregroundStyle(AppTheme.accent)
+                    .font(.system(size: 14))
+            }
+            .buttonStyle(.plain)
+            .padding(.leading, 8)
+            .sheet(isPresented: $vm.showAddCredential) {
+                AddCredentialView()
+                    .environmentObject(vm)
+            }
+
             // Theme toggle
             Button {
                 withAnimation { vm.isDarkMode.toggle() }
